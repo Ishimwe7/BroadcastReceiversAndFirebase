@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Platform } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Platform, GestureResponderEvent } from 'react-native';
 import axios from 'axios';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePicker,  { Event as DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { format } from 'date-fns';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
@@ -23,17 +23,29 @@ export default function Registration() {
     const [invalidEmail, setInvalidEmail] = useState('');
     const [date, setDate] = useState(new Date());
     const [show, setShow] = useState(false);
-    const [text, setText] = useState('Choose Date');
+    const [text, setText] = useState('');
     const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
     const { theme } = useTheme();
 
-  const onChange = (event:React.ChangeEvent, selectedDate:Date) => {
-    const currentDate = selectedDate || date;
-    setShow(Platform.OS === 'ios');
+  // const onChange = (event:Event, selectedDate:Date) => {
+  //   const currentDate = selectedDate || date;
+  //   setShow(Platform.OS === 'ios');
+  //   setDate(currentDate);
+  //   setText(format(currentDate, 'yyyy-MM-dd')); 
+  // };
+
+  const onChange = (event:  DateTimePickerEvent, selectedDate?: Date) => {
+  const currentDate = selectedDate || date;
+  setShow(false); 
+  if (Platform.OS === 'ios') {
     setDate(currentDate);
     setText(format(currentDate, 'yyyy-MM-dd')); 
-  };
-
+  } else {
+    setDate(currentDate);
+    setText(format(currentDate, 'yyyy-MM-dd')); 
+    setFormData({ ...formData, dob: currentDate });
+  }
+};
   const showDatepicker = () => {
     setShow(true);
   };
@@ -184,7 +196,7 @@ export default function Registration() {
             {error&& <Text style={styles[theme].error}>{ error}</Text>}
             {success && <Text style={styles[theme].success}>{ success}</Text>}
 
-            <TouchableOpacity style={styles[theme].button} onPress={handleSignUp}>
+            <TouchableOpacity style={styles[theme].button} onPress={handleRegistration}>
                 <Text style={styles[theme].buttonText}>Register</Text>
             </TouchableOpacity>
             <Text style={styles[theme].account}>Already have an account ? Login</Text>
@@ -293,6 +305,7 @@ const styles = {
     },
     icon: {
       marginLeft: 10,
+      marginTop:20,
       color: '#fff',
     },
     input: {

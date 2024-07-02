@@ -93,7 +93,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
             {requiredFields && <Text style={styles[theme].error}>{requiredFields}</Text>}
              {error && <Text style={styles[theme].error}>{error}</Text>}
             {success && <Text style={styles[theme].success}>{ success}</Text>}
-            <TouchableOpacity style={styles[theme].button} onPress={handleSignIn}>
+            <TouchableOpacity style={styles[theme].button} onPress={handleLogin}>
                 <Text style={styles[theme].buttonText}>Login</Text>
             </TouchableOpacity>
             <Text style={styles[theme].account}>Don't have an account ? Register</Text>
