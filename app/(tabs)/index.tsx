@@ -26,7 +26,7 @@ export default function App() {
               Battery Level: {battery}%
             </Text>
           </View>
-        )}
+        )} 
     </DrawerProvider>
    </ThemeProvider>
   );

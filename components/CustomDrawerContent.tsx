@@ -1,5 +1,9 @@
 import React from 'react';
-import { View, Text, StyleSheet, Switch, Image } from 'react-native';
+import { View, Text, StyleSheet, Switch, Image, Alert } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import { getContacts as fetchContacts } from '@/utils/contacts';
+import { selectFromGallery } from '@/utils/image';
+import { takePicture } from '@/utils/image';
 import {
   DrawerContentScrollView,
   DrawerItem,
@@ -11,6 +15,24 @@ import { useTheme } from './ThemeContext';
 const CustomDrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
 
   const { theme, toggleTheme } = useTheme();
+   const { t, i18n } = useTranslation();
+
+  const changeLanguage = (lng: string) => {
+    i18n.changeLanguage(lng);
+  };
+
+  const handleGetContacts = async () => {
+  try {
+    const contacts = await fetchContacts();
+    console.log('Contacts:', contacts);
+  } catch (error) {
+    if (error instanceof Error) {
+      Alert.alert(error.message);
+    } else {
+      Alert.alert('An expected error occurred');
+    }
+  }
+};
 
   return (
     <DrawerContentScrollView style={styles[theme].container} {...props}>
@@ -20,6 +42,10 @@ const CustomDrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
           style={styles[theme].profileImage}
         />
         <Text style={styles[theme].nameText}>Eng.Nyanja</Text>
+        <View style={styles[theme].profileOptions}>
+          <Icon name="image-outline" size={30} color={styles[theme].iconColor.color} onPress={selectFromGallery} />
+          <Icon name="camera-outline" size={30} color={styles[theme].iconColor.color} onPress={takePicture} />
+        </View>
       </View>
       <DrawerItem
         label="Sign Up"
@@ -45,6 +71,22 @@ const CustomDrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
         onPress={() => props.navigation.navigate('Calculator')}
          labelStyle={styles[theme].drawerItemLabel}
       />
+       <DrawerItem
+        label={t('Change Language')}
+        icon={({ color, size }) => (
+          <Icon name="language-outline" color={styles[theme].iconColor.color} size={size} />
+        )}
+        onPress={() => changeLanguage(i18n.language === 'en' ? 'fr' : 'en')}
+        labelStyle={styles[theme].drawerItemLabel}
+      />
+       <DrawerItem
+        label="Contacts"
+        icon={({ color, size }) => (
+          <Icon name="person-circle-outline" color={styles[theme].iconColor.color} size={size} />
+        )}
+        onPress={handleGetContacts}
+        labelStyle={styles[theme].drawerItemLabel}
+      />
       <View style={styles[theme].themeToggler}>
         <Text style={styles[theme].themeText}>{theme === 'light' ? 'Light Mode' : 'Dark Mode'}</Text>
         <Switch
@@ -63,6 +105,7 @@ const styles = {
     container: {
       flex: 1,
       backgroundColor: '#fff',
+      zIndex:999
     },
     drawerHeader: {
       backgroundColor: '#f6f6f6',
@@ -85,6 +128,12 @@ const styles = {
     },
     iconColor: {
       color: '#000',
+    },
+    profileOptions: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      width: '50%',
+      marginTop: 10,
     },
     nameText: {
       fontSize: 18,
@@ -114,6 +163,12 @@ const styles = {
       alignItems: 'center',
       justifyContent: 'center',
       marginBottom: 10,
+    },
+    profileOptions: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      width: '50%',
+      marginTop: 10,
     },
     drawerItem: {
       color:'000'
