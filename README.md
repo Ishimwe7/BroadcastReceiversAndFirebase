@@ -30,3 +30,23 @@ In the output, you'll find options to open the app in a
 ### Navigation Drawer
 
 ![Navigation Drawer](./assets/images/drawer.jpg)
+
+### Battery level
+
+![Navigation Drawer](./assets/images/battery.jpg)
+
+### App in Light Mode
+
+![Navigation Drawer](./assets/images/appLightMode.jpg)
+
+### App in Dark Mode
+
+![Navigation Drawer](./assets/images/appDarkMode.jpg)
+
+### Accessing Contacts
+
+![Navigation Drawer](./assets/images/accessingContacts.jpg)
+
+### Accessed Contacts
+
+![Navigation Drawer](./assets/images/contacts.PNG)
