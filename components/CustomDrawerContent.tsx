@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Switch, Image, Alert } from 'react-native';
-import { useTranslation } from 'react-i18next';
+import { View, Text, StyleSheet, Switch, Image} from 'react-native';
+
 import * as ImagePicker from "expo-image-picker";
 import {
   DrawerContentScrollView,
@@ -9,6 +9,7 @@ import {
 } from '@react-navigation/drawer';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useTheme } from './ThemeContext';
+import { useTranslation } from 'react-i18next';
  const [image, setImage] = useState<string | null>(null);
 
 const CustomDrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
