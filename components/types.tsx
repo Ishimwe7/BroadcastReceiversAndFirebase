@@ -8,6 +8,7 @@ export type TabParamList = {
   Registration: undefined;
   Login: undefined;
   Calculator: undefined;
+  Contacts: undefined;
 };
 
 export type RootDrawerParamList = {

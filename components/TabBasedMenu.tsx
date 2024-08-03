@@ -7,6 +7,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import Calculator from '@/components/Calculator';
 import Login from '@/components/Login';
 import Registration from '@/components/Registration';
+import ContactsScreen from './contacts';
 import { TabParamList, NavigationProps } from './types';
 import { useTheme } from '@react-navigation/native';
 
@@ -49,7 +50,10 @@ export default function TabBasedNavigation() {
             iconName = focused ? 'person-add' : 'person-add-outline';
           } else if (route.name === 'Login') {
             iconName = focused ? 'log-in' : 'log-in-outline';
-          } else if (route.name === 'Calculator') {
+          } else if (route.name === 'Contacts') {
+            iconName = focused ? 'person-circle-outline' : 'person-circle-outline';
+          }
+          else if (route.name === 'Calculator') {
             iconName = focused ? 'calculator' : 'calculator-outline';
           } else {
             iconName = 'alert';
@@ -79,6 +83,12 @@ export default function TabBasedNavigation() {
         options={{ tabBarLabel: 'Sign In' }}
       >
         {() => <Login onLogin={handleLogin} />}
+      </Tab.Screen>
+      <Tab.Screen
+        name="Contacts"
+        component={ContactsScreen}
+        options={{ tabBarLabel: 'Contacts' }}
+      >
       </Tab.Screen>
       <Tab.Screen
         name="Calculator"

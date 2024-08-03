@@ -1,9 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, Switch, Image, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { getContacts as fetchContacts } from '@/utils/contacts';
-import { selectFromGallery } from '@/utils/image';
-import { takePicture } from '@/utils/image';
+import * as ImagePicker from "expo-image-picker";
 import {
   DrawerContentScrollView,
   DrawerItem,
@@ -11,6 +9,7 @@ import {
 } from '@react-navigation/drawer';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useTheme } from './ThemeContext';
+ const [image, setImage] = useState<string | null>(null);
 
 const CustomDrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
 
@@ -21,16 +20,40 @@ const CustomDrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
     i18n.changeLanguage(lng);
   };
 
-  const handleGetContacts = async () => {
-  try {
-    const contacts = await fetchContacts();
-    console.log('Contacts:', contacts);
-  } catch (error) {
-    if (error instanceof Error) {
-      Alert.alert(error.message);
-    } else {
-      Alert.alert('An expected error occurred');
-    }
+const handleTakeImage = async () => {
+  const permissionResult =
+    await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+  if (permissionResult.granted === false) {
+    alert("Permission to access camera roll is required!");
+    return;
+  }
+   const result = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+   });
+  if (!result.canceled) {
+    setImage(result.assets[0].uri);
+  }
+};
+const handleSelectImage = async () => {
+  const permissionResult =
+    await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+  if (permissionResult.granted === false) {
+    alert("Permission to access camera roll is required!");
+    return;
+  }
+  //const result = await ImagePicker.launchImageLibraryAsync();
+   const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+   });
+  if (!result.canceled) {
+    setImage(result.assets[0].uri);
   }
 };
 
@@ -38,13 +61,13 @@ const CustomDrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
     <DrawerContentScrollView style={styles[theme].container} {...props}>
       <View style={styles[theme].drawerHeader}>
         <Image
-          source={require('../assets/images/new-profile.jpg')} 
+          source={image ? { uri: image } : require('../assets/images/new-profile.jpg')}
           style={styles[theme].profileImage}
         />
         <Text style={styles[theme].nameText}>Eng.Nyanja</Text>
         <View style={styles[theme].profileOptions}>
-          <Icon name="image-outline" size={30} color={styles[theme].iconColor.color} onPress={selectFromGallery} />
-          <Icon name="camera-outline" size={30} color={styles[theme].iconColor.color} onPress={takePicture} />
+          <Icon name="image-outline" size={30} color={styles[theme].iconColor.color} onPress={handleSelectImage} />
+          <Icon name="camera-outline" size={30} color={styles[theme].iconColor.color} onPress={handleTakeImage} />
         </View>
       </View>
       <DrawerItem
@@ -84,7 +107,7 @@ const CustomDrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
         icon={({ color, size }) => (
           <Icon name="person-circle-outline" color={styles[theme].iconColor.color} size={size} />
         )}
-        onPress={handleGetContacts}
+        onPress={() => props.navigation.navigate('Contacts')}
         labelStyle={styles[theme].drawerItemLabel}
       />
       <View style={styles[theme].themeToggler}>

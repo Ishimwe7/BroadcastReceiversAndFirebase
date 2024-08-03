@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, Alert } from 'react-native';
-import { Contact } from 'react-native-contacts';
-import { getContacts as fetchContacts } from '../utils/contacts'
+import * as Contacts from 'expo-contacts';
+import getContacts from '@/utils/contacts';
 
 const ContactsScreen: React.FC = () => {
-  const [contacts, setContacts] = useState<Contact[]>([]);
+  const [contacts, setContacts] = useState<Contacts.Contact[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const loadContacts = async () => {
       try {
-        const fetchedContacts = await fetchContacts();
-        setContacts(fetchedContacts);
+        const fetchedContacts = await getContacts();
+        const sortedContacts = fetchedContacts.sort((a, b) =>
+          a.name.localeCompare(b.name)
+        );
+        setContacts(sortedContacts);
       } catch (error) {
         if (error instanceof Error) {
           Alert.alert(error.message);
@@ -26,10 +29,23 @@ const ContactsScreen: React.FC = () => {
     loadContacts();
   }, []);
 
-  const renderItem = ({ item }: { item: Contact }) => (
+  const renderItem = ({ item }: { item: Contacts.Contact }) => (
     <View style={styles.contactItem}>
-      <Text style={styles.contactName}>{item.givenName} {item.familyName}</Text>
-      <Text style={styles.contactNumber}>{item.phoneNumbers.map(phone => phone.number).join(', ')}</Text>
+      <View style={styles.profileCircle}>
+        <Text style={styles.profileInitial}>
+          {item.name.charAt(0).toUpperCase()}
+        </Text>
+      </View>
+      <View style={styles.contactInfo}>
+        <Text style={styles.contactName}>{item.name}</Text>
+        {item.phoneNumbers && item.phoneNumbers.length > 0 ? (
+          <Text style={styles.contactNumber}>
+            {item.phoneNumbers.map(phone => phone.number).join(', ')}
+          </Text>
+        ) : (
+          <Text style={styles.noNumber}>No phone number available</Text>
+        )}
+      </View>
     </View>
   );
 
@@ -41,7 +57,7 @@ const ContactsScreen: React.FC = () => {
     <View style={styles.container}>
       <FlatList
         data={contacts}
-        keyExtractor={(item) => item.recordID}
+        keyExtractor={(item) => item.id || Math.random().toString(36).substr(2, 9)}
         renderItem={renderItem}
       />
     </View>
@@ -55,16 +71,39 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   contactItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
   },
-  contactName: {
-    fontSize: 18,
+  profileCircle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#007bff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
+  },
+  profileInitial: {
+    color: '#fff',
+    fontSize: 20,
     fontWeight: 'bold',
+  },
+  contactInfo: {
+    flex: 1,
+  },
+  contactName: {
+    fontSize: 15,
   },
   contactNumber: {
     fontSize: 16,
+    color: '#555',
+  },
+  noNumber: {
+    fontSize: 16,
+    color: '#888',
   },
 });
 
