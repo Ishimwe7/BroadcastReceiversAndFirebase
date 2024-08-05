@@ -11,10 +11,9 @@ interface RegisterFormData {
   names: string;
   email: string;
   password: string;
-  dob: Date | null;
 }
 export default function Registration() {
-    const [formData, setFormData] = useState<RegisterFormData>({ names: '', email: '', password: '', dob:null});
+    const [formData, setFormData] = useState<RegisterFormData>({ names: '', email: '', password: ''});
     const [confirmPassword, setConfirmPassword] = useState('');
     const [passwordMismatch, setPasswordMismatch] = useState('');
     const [requiredFields, setRequiredFields] = useState('');
@@ -26,6 +25,7 @@ export default function Registration() {
     const [text, setText] = useState('');
     const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
     const { theme } = useTheme();
+    const [dob,setDob] = useState<Date|null>(null);
 
   // const onChange = (event:Event, selectedDate:Date) => {
   //   const currentDate = selectedDate || date;
@@ -43,7 +43,7 @@ export default function Registration() {
   } else {
     setDate(currentDate);
     setText(format(currentDate, 'yyyy-MM-dd')); 
-    setFormData({ ...formData, dob: currentDate });
+    setDob(currentDate);
   }
 };
   const showDatepicker = () => {
@@ -85,15 +85,14 @@ export default function Registration() {
         }
 
          try {
-            const response = await axios.post('https://todo-app-qw91.onrender.com/users/register', {
-                formData
-            });
-             if (response.status === 200) {
+          console.log('Form data: ', formData)
+            const response = await axios.post('https://todo-app-qw91.onrender.com/users/register',formData);
+             if (response.status === 201) {
                 setConfirmPassword('');
                 setRequiredFields('');
                 setPasswordMismatch('');
                 setError('');
-                setFormData({ names: '', email: '', password: '',dob: null});
+                setFormData({ names: '', email: '', password: ''});
                 setSuccess('Registration Done Successfully !');
              }
              else {
@@ -108,7 +107,17 @@ export default function Registration() {
             setRequiredFields('');
             setPasswordMismatch('');
             setSuccess('');
-            setError('Registration Failed!');
+           if (axios.isAxiosError(error)) {
+           if (error.response?.status === 409) {
+              setError('This email is already registered. Please use a different email address.');
+           } else if (error.response?.data?.Invalid) {
+              setError(error.response.data.Invalid);
+           } else {
+             setError(error.response?.data?.message || 'Registration Failed!');
+           }
+           } else {
+             setError('An unexpected error occurred');
+           }
         }
     };
 
@@ -121,7 +130,7 @@ export default function Registration() {
              setRequiredFields('');
              setPasswordMismatch('');
              setError('');
-             setFormData({ names: '', email: '', password: '',dob: null});
+             setFormData({ names: '', email: '', password: ''});
              setSuccess('Registration Done Successfully !');
         }
         else {

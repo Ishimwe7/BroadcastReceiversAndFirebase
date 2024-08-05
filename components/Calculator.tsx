@@ -132,7 +132,7 @@ const styles = {
       marginTop: 50,
     },
     calculator: {
-      marginTop: 40,
+      marginTop: 20,
       alignItems: 'center',
     },
     logoutContainer: {
@@ -144,6 +144,7 @@ const styles = {
       flexDirection: 'row',
       alignItems: 'center',
       padding: 10,
+      paddingTop:0
     },
     logoutText: {
       color: 'tomato',
@@ -207,7 +208,7 @@ const styles = {
       marginTop: 50,
     },
     calculator: {
-      marginTop: 40,
+      marginTop: 20,
       alignItems: 'center',
     },
     logoutContainer: {
@@ -219,6 +220,7 @@ const styles = {
       flexDirection: 'row',
       alignItems: 'center',
       padding: 10,
+      paddingTop:0
     },
     logoutText: {
       color: 'tomato',

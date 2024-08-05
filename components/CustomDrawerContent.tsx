@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Switch, Image} from 'react-native';
 
 import * as ImagePicker from "expo-image-picker";
@@ -10,16 +10,37 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useTheme } from './ThemeContext';
 import { useTranslation } from 'react-i18next';
- const [image, setImage] = useState<string | null>(null);
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const CustomDrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
-
+  const [image, setImage] = useState<string | null>(null);
   const { theme, toggleTheme } = useTheme();
-   const { t, i18n } = useTranslation();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const changeLanguage = (lng: string) => {
-    i18n.changeLanguage(lng);
+  const { i18n, t } = useTranslation();
+  const currentLanguage = i18n.language;
+
+  useEffect(() => {
+    const loadLanguage = async () => {
+      const savedLanguage = await AsyncStorage.getItem("language");
+      if (savedLanguage) {
+        i18n.changeLanguage(savedLanguage);
+      }
+    };
+    loadLanguage();
+  }, [i18n]);
+
+  const changeLanguage = async (lang: string) => {
+    await AsyncStorage.setItem("language", lang);
+    console.log('Language: ', i18n)
+    console.log('Before change: ', i18n.language)
+    i18n.changeLanguage(lang);
+    console.log('After change: ', i18n.language)
   };
+  
+  // const changeLanguage = (lng: string) => {
+  //   i18n.changeLanguage(lng);
+  // };
 
 const handleTakeImage = async () => {
   const permissionResult =
@@ -56,7 +77,22 @@ const handleSelectImage = async () => {
   if (!result.canceled) {
     setImage(result.assets[0].uri);
   }
-};
+  };
+  
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    AsyncStorage.removeItem('isLoggedIn');
+    props.navigation.navigate('Login');
+  };
+
+   useEffect(() => {
+    const checkLoginStatus = async () => {
+      const loggedIn = await AsyncStorage.getItem('isLoggedIn');
+      setIsLoggedIn(loggedIn === 'true');
+      console.log("Logged in: ", isLoggedIn);
+    };
+    checkLoginStatus();
+  }, []);
 
   return (
     <DrawerContentScrollView style={styles[theme].container} {...props}>
@@ -79,14 +115,33 @@ const handleSelectImage = async () => {
         onPress={() => props.navigation.navigate('Registration')}
          labelStyle={styles[theme].drawerItemLabel}
       />
-      <DrawerItem
+      {/* <DrawerItem
         label="Sign In"
         icon={({ color, size }) => (
           <Icon name="log-in-outline" color={styles[theme].iconColor.color} size={size} />
         )}
         onPress={() => props.navigation.navigate('Login')}
          labelStyle={styles[theme].drawerItemLabel}
-      />
+      /> */}
+         {!isLoggedIn? (
+        <DrawerItem
+          label="Sign In"
+          icon={({ color, size }) => (
+            <Icon name="log-in-outline" color={styles[theme].iconColor.color} size={size} />
+          )}
+          onPress={() => props.navigation.navigate('Login')}
+          labelStyle={styles[theme].drawerItemLabel}
+        />
+      ) : (
+        <DrawerItem
+          label="Logout"
+          icon={({ color, size }) => (
+            <Icon name="log-out-outline" color={styles[theme].iconColor.color} size={size} />
+          )}
+          onPress={handleLogout}
+          labelStyle={styles[theme].drawerItemLabel}
+        />
+      )}
       <DrawerItem
         label="Calculator"
         icon={({ color, size }) => (
@@ -96,11 +151,12 @@ const handleSelectImage = async () => {
          labelStyle={styles[theme].drawerItemLabel}
       />
        <DrawerItem
-        label={t('Change Language')}
+        // label={t('Change Language')}
+        label={`${t('Change Language')} (${currentLanguage === 'en' ? 'English' : 'Português'})`}
         icon={({ color, size }) => (
           <Icon name="language-outline" color={styles[theme].iconColor.color} size={size} />
         )}
-        onPress={() => changeLanguage(i18n.language === 'en' ? 'fr' : 'en')}
+        onPress={() => changeLanguage(i18n.language === 'en' ? 'pt' : 'en')}
         labelStyle={styles[theme].drawerItemLabel}
       />
        <DrawerItem

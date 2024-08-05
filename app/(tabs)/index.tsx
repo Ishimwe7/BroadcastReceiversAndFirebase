@@ -6,6 +6,7 @@ import firebase from '@react-native-firebase/app';
 import useBatteryMonitor from '@/eventEmitters/battery';
 import useNetworkStatus from '@/eventEmitters/connectivity';
 import { View, Text } from 'react-native';
+import '@/i18n';
 export default function App() {
   const connection = useNetworkStatus();
   const battery = useBatteryMonitor();

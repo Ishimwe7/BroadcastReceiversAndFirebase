@@ -3,6 +3,8 @@ import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-nativ
 import axios from 'axios';
 import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
 import { useTheme } from './ThemeContext';
+import { NavigationProp, ParamListBase, useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
  interface LoginProps {
      onLogin: () => void; 
@@ -18,6 +20,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     const [error, setError] = useState('');
     const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
     const { theme } = useTheme();
+     const navigate = useNavigation<NavigationProp<ParamListBase>>();
     // const [user, setUser] = useState(null);
     const handleLogin = async() => {
         // Validate input fields
@@ -25,17 +28,17 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
             setSuccess('');
             setError('');
             setRequiredFields('All Fields are required !');
+            return;
         }
 
 
         try {
-            const response = await axios.post('https://todo-app-qw91.onrender.com/users/login', {
-                formData
-            });
-            console.log(response);
+            const response = await axios.post('https://todo-app-qw91.onrender.com/users/login', formData);   
             if (response.status === 200) {
                 setRequiredFields('');
                 setSuccess('Login Successfully !');
+                await AsyncStorage.setItem('isLoggedIn','true');
+                navigate.navigate('Calculator');
                 setError('');
                 setFormData({ email: '', password: '' });
                 onLogin();
@@ -46,6 +49,17 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
         } catch (error) {
             setError('Login Failed!');
             setSuccess('');
+             if (axios.isAxiosError(error)) {
+           if (error.response?.status === 404 || error.response?.status === 400) {
+              setError('Invalid Credentials.');
+           } else if (error.response?.data?.Invalid) {
+              setError(error.response.data.Invalid);
+           } else {
+             setError(error.response?.data?.message || 'Login Failed!');
+           }
+           } else {
+             setError('An unexpected error occurred');
+           }
         }
     };
 

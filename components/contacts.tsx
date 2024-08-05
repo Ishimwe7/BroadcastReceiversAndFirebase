@@ -55,6 +55,7 @@ const ContactsScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
+      <Text style={styles.heading}>Contacts</Text>
       <FlatList
         data={contacts}
         keyExtractor={(item) => item.id || Math.random().toString(36).substr(2, 9)}
@@ -69,6 +70,11 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
     backgroundColor: '#fff',
+  },
+  heading: {
+    textAlign: 'center',
+    fontSize: 20,
+    fontWeight:'bold'
   },
   contactItem: {
     flexDirection: 'row',

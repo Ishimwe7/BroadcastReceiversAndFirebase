@@ -10,6 +10,7 @@ import Registration from '@/components/Registration';
 import ContactsScreen from './contacts';
 import { TabParamList, NavigationProps } from './types';
 import { useTheme } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Tab = createBottomTabNavigator<TabParamList>();
 
@@ -37,6 +38,7 @@ export default function TabBasedNavigation() {
 
   const handleLogout = (navigation: NavigationProps) => {
     setIsLoggedIn(false);
+    AsyncStorage.removeItem('isLoggedIn');
     navigation.navigate('Login');
   };
 
@@ -63,11 +65,6 @@ export default function TabBasedNavigation() {
         },
         tabBarActiveTintColor: 'tomato',
         tabBarInactiveTintColor: 'gray',
-        // tabBarActiveTintColor: theme ? '#ff6347' : '#0066FF', // Tomato or Blue
-        // tabBarInactiveTintColor: theme.dark ? '#b0c4de' : '#b0c4de', // LightSteelBlue
-        // tabBarStyle: {
-        //   backgroundColor: theme.dark ? '#333' : '#f5f5f5', // Dark or Light background color
-        // },
         headerShown: true,
         headerTitle: '',
         headerLeft: () => <CustomHeader />,
@@ -78,12 +75,14 @@ export default function TabBasedNavigation() {
         component={Registration}
         options={{ tabBarLabel: 'Sign Up' }}
       />
-      <Tab.Screen
-        name="Login"
-        options={{ tabBarLabel: 'Sign In' }}
-      >
-        {() => <Login onLogin={handleLogin} />}
-      </Tab.Screen>
+      {!isLoggedIn && (
+        <Tab.Screen
+          name="Login"
+          options={{ tabBarLabel: 'Sign In' }}
+        >
+          {() => <Login onLogin={handleLogin} />}
+        </Tab.Screen>
+      )}
       <Tab.Screen
         name="Contacts"
         component={ContactsScreen}
