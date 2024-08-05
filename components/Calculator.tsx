@@ -2,6 +2,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet,ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from './ThemeContext';
 
 interface CalculatorProps {
@@ -12,6 +13,7 @@ const Calculator: React.FC<CalculatorProps> = ({ onLogout}) => {
   const [result, setResult] = useState<string>('');
   const scrollViewRef = useRef<ScrollView>(null);
   const { theme } = useTheme();
+  const { t } = useTranslation();
 
   const handlePress = (value: string) => {
     setInput(input + value);

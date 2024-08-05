@@ -15,7 +15,7 @@ export default function App() {
       <DrawerProvider>
         <AppNavigator />
         {connection && (
-          <View style={{ position: 'absolute', top: '15%', width: '100%', height: 50, backgroundColor: connection.color, justifyContent: 'center', alignItems: 'center' }}>
+          <View style={{ position: 'absolute', top: '15%', width: '100%', height: 50, backgroundColor: connection.color, justifyContent: 'center',opacity:999, alignItems: 'center' }}>
             <Text style={{ color: 'white', fontSize: 16 }}>
               {connection.message}
             </Text>

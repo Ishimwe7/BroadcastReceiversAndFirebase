@@ -11,6 +11,7 @@ import ContactsScreen from './contacts';
 import { TabParamList, NavigationProps } from './types';
 import { useTheme } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTranslation } from 'react-i18next';
 
 const Tab = createBottomTabNavigator<TabParamList>();
 
@@ -31,6 +32,7 @@ const CustomHeader: React.FC = () => {
 export default function TabBasedNavigation() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const theme = useTheme();
+  const t = useTranslation();
 
   const handleLogin = () => {
     setIsLoggedIn(true);

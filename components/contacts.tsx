@@ -2,11 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, Alert } from 'react-native';
 import * as Contacts from 'expo-contacts';
 import getContacts from '@/utils/contacts';
+import { useTranslation } from 'react-i18next';
 
 const ContactsScreen: React.FC = () => {
   const [contacts, setContacts] = useState<Contacts.Contact[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-
+  const { t } = useTranslation();
   useEffect(() => {
     const loadContacts = async () => {
       try {
@@ -55,7 +56,7 @@ const ContactsScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>Contacts</Text>
+      <Text style={styles.heading}>{t('contactList.title')}</Text>
       <FlatList
         data={contacts}
         keyExtractor={(item) => item.id || Math.random().toString(36).substr(2, 9)}
