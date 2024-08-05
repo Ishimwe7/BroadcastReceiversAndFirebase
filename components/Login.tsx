@@ -5,6 +5,7 @@ import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
 import { useTheme } from './ThemeContext';
 import { NavigationProp, ParamListBase, useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTranslation } from 'react-i18next';
 
  interface LoginProps {
      onLogin: () => void; 
@@ -20,7 +21,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     const [error, setError] = useState('');
     const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
     const { theme } = useTheme();
-     const navigate = useNavigation<NavigationProp<ParamListBase>>();
+    const navigate = useNavigation<NavigationProp<ParamListBase>>();
     // const [user, setUser] = useState(null);
     const handleLogin = async() => {
         // Validate input fields

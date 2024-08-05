@@ -156,7 +156,7 @@ const handleSelectImage = async () => {
         icon={({ color, size }) => (
           <Icon name="language-outline" color={styles[theme].iconColor.color} size={size} />
         )}
-        onPress={() => changeLanguage(i18n.language === 'en' ? 'pt' : 'en')}
+        onPress={() => changeLanguage(i18n.language === 'en' ? 'fr' : 'en')}
         labelStyle={styles[theme].drawerItemLabel}
       />
        <DrawerItem
